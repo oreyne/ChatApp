@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../navigation/AuthProvider';
+import { View, StyleSheet, Button } from 'react-native';
 import { Title } from 'react-native-paper';
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
 
 export default function LoginScreen({navigation}) {
+	const { login } = useContext(AuthContext);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -27,6 +29,7 @@ export default function LoginScreen({navigation}) {
 	            title='Login'
 	            modeValue='contained'
 	            labelStyle={styles.loginButtonLabel}            
+	            onPress={() => login(email, password)}
 	        />
 	        <FormButton
 	            title='New user? Join here'
@@ -34,7 +37,7 @@ export default function LoginScreen({navigation}) {
 	            uppercase={false}
 	            labelStyle={styles.navButtonLabel}     
 	            onPress = {() => navigation.navigate('Signup')}       
-	        />        
+	        />   
 		</View>
 	);
 }

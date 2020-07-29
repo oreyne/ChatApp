@@ -26,11 +26,14 @@ import {
 
 import { Provider as PaperProvider } from 'react-native-paper';
 import Routes from './src/navigation/Routes';
+import { AuthProvider } from './src/navigation/AuthProvider';
 
 const App: () => React$Node = () => {
   return (
       <PaperProvider>
-        <Routes />
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
       </PaperProvider>    
   );
 };
