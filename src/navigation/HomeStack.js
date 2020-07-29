@@ -20,7 +20,7 @@ function ChatApp() {
 			<ChatAppStack.Screen 
 				name='Home' 
 				component={HomeScreen} 
-				options={({navigation}) => ({
+				options={({ navigation }) => ({
 					headerRight: () => (
 						<IconButton 
 							icon='message-plus'

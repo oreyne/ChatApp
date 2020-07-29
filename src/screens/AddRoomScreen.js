@@ -3,9 +3,29 @@ import { View, StyleSheet } from 'react-native';
 import { IconButton, Title } from 'react-native-paper';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
+import firestore from '@react-native-firebase/firestore';
 
 export default function AddRoomScreen({ navigation }) {
 	const [ roomName, setRoomName ] = useState('');
+
+	function handleButtonPress(){
+		// if (roomName.lenght > 0) {
+			firestore()
+				.collection('THREADS')
+				.add({ name: roomName })
+				.then(() => {
+					navigation.navigate('Home');
+				})
+				.catch(e => {
+					console.log(e);
+				});
+
+		// }
+		console.log(roomName);
+
+		// const usersCollection = firestore().collection('THREADS');
+		// console.log(usersCollection);
+	}
 
 	return(
 		<View style={styles.rootContainer}>
@@ -23,7 +43,7 @@ export default function AddRoomScreen({ navigation }) {
 					labelName='Room Name'
 					value={roomName}
 					onChangeText={(text) => setRoomName(text)}
-					clearButtonMode='whileediting'
+					clearButtonMode='while-editing'
 				/>
 				<FormButton
 					title='Create'
