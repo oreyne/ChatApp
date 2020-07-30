@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../navigation/AuthProvider';
+import { GiftedChat, Bubble, Send, SystemMessage } from 'react-native-gifted-chat';
 import { IconButton } from 'react-native-paper';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
-export default function RoomScreen(){
+export default function RoomScreen({ route }){
+	const { user } = useContext(AuthContext);
+	const currentUser = user.toJSON();
+	const { thread } = route.params;
 	const [ messages, setMessages ] = useState(
 		[
 			{
@@ -23,6 +28,87 @@ export default function RoomScreen(){
 			}
 		]
 	);
+
+	async function handleSend(messages) {
+		const text = messages[0].text;
+
+		firestore()
+		.collection('THREADS')
+		.doc(thread._id)
+		.collection('MESSAGES')
+		.add({
+			text,
+			creadAt: new Date().getTime(),
+			user: {
+				_id: currentUser.uid,
+				email: currentUser.email
+			}
+		});
+
+		await firestore()
+	    .collection('THREADS')
+	    .doc(thread._id)
+	    .set(
+	      {
+	        latestMessage: {
+	          text,
+	          createdAt: new Date().getTime()
+	        }
+	      },
+	      { merge: true }
+	    );
+	}
+
+	useEffect(() => {
+	    const messagesListener = firestore()
+	      .collection('THREADS')
+	      .doc(thread._id)
+	      .collection('MESSAGES')
+	      .orderBy('createdAt', 'desc')
+	      .onSnapshot(querySnapshot => {
+	        const messages = querySnapshot.docs.map(doc => {
+	          const firebaseData = doc.data();
+
+	          const data = {
+	            _id: doc.id,
+	            text: '',
+	            createdAt: new Date().getTime(),
+	            ...firebaseData
+	          };
+
+	          if (!firebaseData.system) {
+	            data.user = {
+	              ...firebaseData.user,
+	              name: firebaseData.user.email
+	            };
+	          }
+
+	          return data;
+	        });
+
+	        setMessages(messages);
+	      });
+
+	    return () => messagesListener();
+  	}, []);
+
+  	function renderBubble(props) {
+		return (
+			<Bubble
+        		{...props}
+        		wrapperStyle={{
+          			right: {
+		            	backgroundColor: '#6646ee'
+		          	}
+		        }}
+		        textStyle={{
+		          right: {
+		            color: '#fff'
+		          }
+		        }}
+		      />
+		);
+	}
 
 	function renderLoading() {
 		return(
@@ -46,25 +132,6 @@ export default function RoomScreen(){
 		);
 	}
 
-	function renderBubble(props) {
-		return (
-			<Bubble
-        		{...props}
-        		wrapperStyle={{
-          		right: {
-		            // Here is the color change
-		            backgroundColor: '#6646ee'
-		          }
-		        }}
-		        textStyle={{
-		          right: {
-		            color: '#fff'
-		          }
-		        }}
-		      />
-		);
-	}
-
 	function scrollToBottomComponent() {
 		return (
 			<View style={styles.bottonComponentContainer}>
@@ -73,23 +140,30 @@ export default function RoomScreen(){
 		);
 	}
 
-	function handleSend(newMessage = []) {
-		setMessages(GiftedChat.append(messages, newMessage));
+	function renderSystemMessage(props) {
+		return (
+			<SystemMessage
+				{...props}
+				wrapperStyle={styles.systemMessageWrapper}
+				textStyle={styles.systemMessageText}
+			/>
+		);
 	}
 
 	return (
 		<GiftedChat 
 			messages={messages}
-			onSend={newMessage => handleSend(newMessage)}
-			user={{ _id: 1, name: 'User Test' }}
-      		renderBubble={renderBubble}
+			onSend={handleSend}
+      		user={{ _id: currentUser.uid }}      		
 			placeholder='Type your message here...'
-			showUserAvatar
 			alwaysShowSend
-			renderSend={renderSend}
+			showUserAvatar
 			scrollToBottom
-			scrollToBottomComponent={scrollToBottomComponent}
+			renderBubble={renderBubble}
 			renderLoading={renderLoading}
+			renderSend={renderSend}			
+			scrollToBottomComponent={scrollToBottomComponent}			
+			renderSystemMessage={renderSystemMessage}
 		/>
 	);
 }
@@ -103,5 +177,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center'
+	},
+	systemMessageText: {
+		fontSize: 14,
+		color: '#fff',
+		fontWeight: 'bold',
+		backgroundColor: '#443211'
 	}
 });
