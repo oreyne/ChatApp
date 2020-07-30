@@ -9,22 +9,16 @@ export default function AddRoomScreen({ navigation }) {
 	const [ roomName, setRoomName ] = useState('');
 
 	function handleButtonPress(){
-		// if (roomName.lenght > 0) {
-			firestore()
-				.collection('THREADS')
-				.add({ name: roomName })
-				.then(() => {
-					navigation.navigate('Home');
-				})
-				.catch(e => {
-					console.log(e);
-				});
-
-		// }
+		firestore()
+			.collection('THREADS')
+			.add({ name: roomName })
+			.then(() => {
+				navigation.navigate('Home');
+			})
+			.catch(e => {
+				console.log(e);
+			});
 		console.log(roomName);
-
-		// const usersCollection = firestore().collection('THREADS');
-		// console.log(usersCollection);
 	}
 
 	return(
@@ -54,18 +48,6 @@ export default function AddRoomScreen({ navigation }) {
 				/>
 			</View>
 		</View>
-		// <View style={{
-		// 	flex: 1,
-		// 	justifyContent: 'center',
-		// 	alignItems: 'center'
-		// }}>
-		// 	<Text>Create a new chat</Text>
-		// 	<FormButton
-		// 		mode='contained'
-		// 		title='Close Modal'
-		// 		onPress={() => navigation.goBack()}
-		// 	></FormButton>
-		// </View>
 	);
 }
 

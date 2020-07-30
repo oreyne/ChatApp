@@ -1,10 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { IconButton } from 'react-native-paper';
 import HomeScreen from '../screens/HomeScreen';
 import AddRoomScreen from '../screens/AddRoomScreen';
-import { IconButton } from 'react-native-paper';
+import RoomScreen from '../screens/RoomScreen';
 
-const Stack = createStackNavigator();
+// const Stack = createStackNavigator();
 const ChatAppStack = createStackNavigator();
 const ModalStack = createStackNavigator();
 
@@ -14,6 +15,10 @@ function ChatApp() {
 			screenOptions={{
 				headerStyle: {
 					backgroundColor: '#6646ee'
+				},
+				hederTintColor: '#ffffff',
+				headerTitleStyle: {
+					fontSize: 22
 				}
 			}}
 		>
@@ -31,9 +36,16 @@ function ChatApp() {
 					)
 				})}
 			/>
+			<ChatAppStack.Screen
+				name='Room' 
+				component={RoomScreen}
+				options={({ route }) => ({
+					title: route.params.thread.name
+				})}
+			/>
 		</ChatAppStack.Navigator>
 	);
-}
+}	
 
 export default function HomeStack() {
 	return(

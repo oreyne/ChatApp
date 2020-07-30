@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Title, List, Divider } from 'react-native-paper';
-import { AuthContext } from '../navigation/AuthProvider';
-import FormButton from '../components/FormButton';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { List, Divider } from 'react-native-paper';
+// import { AuthContext } from '../navigation/AuthProvider';
+// import FormButton from '../components/FormButton';
 import Loading from '../components/Loading';
 import firestore from '@react-native-firebase/firestore';
 
@@ -44,14 +44,18 @@ export default function HomeScreen({ navigation }) {
 				keyExtractor={(item) => item._id}
 				ItemSeparatorComponent={() => <Divider />}
 				renderItem={({ item }) => (
-					<List.Item
-						title={item.name}
-						description='Item description'
-						titleNumberOfLines={1}
-						titleStyle={styles.listTitle}
-						descriptionStyle={styles.listDescription}
-						descriptionNumberOfLines={1}
-					/>
+					<TouchableOpacity 
+						onPress={() => navigation.navigate('Room', { thread: item } )}
+					>
+						<List.Item
+							title={item.name}
+							description='Item description'
+							titleNumberOfLines={1}
+							titleStyle={styles.listTitle}
+							descriptionStyle={styles.listDescription}
+							descriptionNumberOfLines={1}
+						/>
+					</TouchableOpacity>
 				)}
 			/>		
 		</View>
