@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Text } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Button } from 'react-native-paper';
 
 const { width, height } = Dimensions.get('screen');
@@ -17,13 +17,11 @@ const styles = StyleSheet.create({
 export default function FormButton({ title, modeValue, ...rest }) {
 	return (
 		<Button
-			mod={modeValue}
+			mode={modeValue}
 			{...rest}
 			style={styles.button}
 			contentStyle={styles.buttonContainer}
-		>
-		{title}
+		>{ title }
 		</Button>
 	);
 }
-

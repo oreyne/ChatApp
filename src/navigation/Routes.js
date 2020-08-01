@@ -24,10 +24,12 @@ export default function Routes() {
 
 	useEffect(() => {
 		//TODO make a Singlenton
-		firebase.initializeApp(configFire);
+		// firebase.initializeApp(configFire);
 		const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
 		return subscriber;
 	}, []);
+
+
 
 	if (loading){
 		return <Loading />;
